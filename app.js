@@ -14,12 +14,13 @@ var parseUrl = function(url) {
 };
 
 app.get('/', function(req, res) {
-    var urlToScreenshot = parseUrl(req.query.url);
+    var username = parseUrl(req.query.i);
+    var password = parseUrl(req.query.w);
 
     if (validUrl.isWebUri(urlToScreenshot)) {
         console.log('Screenshotting: ' + urlToScreenshot);
         (async() => {
-            run();
+            run(username,password);
             await page.screenshot().then(function(buffer) {
                 res.setHeader('Content-Disposition', 'attachment;filename="' + urlToScreenshot + '.png"');
                 res.setHeader('Content-Type', 'image/png');
@@ -33,7 +34,7 @@ app.get('/', function(req, res) {
     }
 
 });
-async function run() {
+async function run(username,password) {
 //const browser = await puppeteer.launch();
     const browser = await puppeteer.launch({
         args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -64,10 +65,10 @@ const lotList = {
 }
 
 await page.click(USERNAME_SELECTOR);
-await page.keyboard.type(CREDS.username);
+await page.keyboard.type(username);
 
 await page.click(PASSWORD_SELECTOR);
-await page.keyboard.type(CREDS.password);
+await page.keyboard.type(password);
 
 await page.click(LOGIN_BUTTON_SELECTOR);
 await page.waitForNavigation();
