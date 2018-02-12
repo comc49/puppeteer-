@@ -14,32 +14,29 @@ var parseUrl = function(url) {
 };
 
 app.get('/', function(req, res) {
-    var username = parseUrl(req.query.i);
-    var password = parseUrl(req.query.w);
+    var username = req.query.i;
+    var password = req.query.w;
+    console.log('test', username,password);
 
-    if (validUrl.isWebUri(urlToScreenshot)) {
-        console.log('Screenshotting: ' + urlToScreenshot);
-        (async() => {
-            run(username,password);
-            await page.screenshot().then(function(buffer) {
-                res.setHeader('Content-Disposition', 'attachment;filename="' + urlToScreenshot + '.png"');
-                res.setHeader('Content-Type', 'image/png');
-                res.send(buffer)
-            });
+    (async() => {
+        const browser = await puppeteer.launch({
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            headless: false
+        });
+        const page = await browser.newPage();
+        await run(username,password,page,browser, res);
+        await page.screenshot().then(function(buffer) {
+            res.setHeader('Content-Disposition', 'attachment;filename="' + 'test' + '.png"');
+            res.setHeader('Content-Type', 'image/png');
+            res.send(buffer)
+        });
 
-            await browser.close();
-        })();
-    } else {
-        res.send('Invalid url: ' + urlToScreenshot);
-    }
+        await browser.close();
+    })();
 
 });
-async function run(username,password) {
+async function run(username, password, page, browser, res) {
 //const browser = await puppeteer.launch();
-    const browser = await puppeteer.launch({
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-const page = await browser.newPage();
 
 await page.goto('https://rudots.t2hosted.com/cmn/auth_guest.aspx');
 
