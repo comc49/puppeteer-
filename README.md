@@ -1,4 +1,3 @@
-# headless-chrome
+# Rutgers Parking Permit headless-chrome puppeteer
 Headless chrome using Puppeteer that can run on Heroku
 
-Blog Post: https://timleland.com/headless-chrome-on-heroku/
